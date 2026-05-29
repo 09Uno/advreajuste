@@ -17,6 +17,8 @@ services:
       STREAMLIT_BROWSER_GATHER_USAGE_STATS: "false"
     volumes:
       - advreajuste_data:/var/data
+    ports:
+      - "8501:8501"
     expose:
       - "8501"
     shm_size: "1gb"

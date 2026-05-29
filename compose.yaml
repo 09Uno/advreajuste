@@ -24,28 +24,13 @@ services:
       timeout: 10s
       retries: 5
       start_period: 60s
+    networks:
+      - proxy
 
-  caddy:
-    image: caddy:2-alpine
-    restart: unless-stopped
-    depends_on:
-      app:
-        condition: service_healthy
-    environment:
-      APP_DOMAIN: ${APP_DOMAIN}
-    ports:
-      - "80:80"
-      - "443:443"
-    volumes:
-      - ./Caddyfile:/etc/caddy/Caddyfile:ro
-      - caddy_data:/data
-      - caddy_config:/config
+networks:
+  proxy:
+    external: true
 
 volumes:
   advreajuste_data:
     name: advreajuste_data
-  caddy_data:
-    name: advreajuste_caddy_data
-  caddy_config:
-    name: advreajuste_caddy_config
-

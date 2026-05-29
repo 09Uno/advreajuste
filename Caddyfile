@@ -1,0 +1,20 @@
+{$APP_DOMAIN} {
+    encode zstd gzip
+
+    request_body {
+        max_size 2048MB
+    }
+
+    header {
+        X-Content-Type-Options nosniff
+        Referrer-Policy no-referrer
+        -Server
+    }
+
+    reverse_proxy app:8501 {
+        transport http {
+            read_timeout 1800s
+            write_timeout 1800s
+        }
+    }
+}

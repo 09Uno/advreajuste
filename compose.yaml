@@ -1,0 +1,51 @@
+name: advreajuste
+
+services:
+  app:
+    build:
+      context: .
+    image: advreajuste-app:latest
+    restart: unless-stopped
+    env_file:
+      - .env
+    environment:
+      ADVREAJUSTE_DATA_DIR: /var/data
+      ADVREAJUSTE_OCR_CACHE_DIR: /var/data/cache/ocr
+      STREAMLIT_SERVER_HEADLESS: "true"
+      STREAMLIT_BROWSER_GATHER_USAGE_STATS: "false"
+    volumes:
+      - advreajuste_data:/var/data
+    expose:
+      - "8501"
+    shm_size: "1gb"
+    healthcheck:
+      test: ["CMD-SHELL", "curl -fsS http://localhost:8501/healthz || exit 1"]
+      interval: 30s
+      timeout: 10s
+      retries: 5
+      start_period: 60s
+
+  caddy:
+    image: caddy:2-alpine
+    restart: unless-stopped
+    depends_on:
+      app:
+        condition: service_healthy
+    environment:
+      APP_DOMAIN: ${APP_DOMAIN}
+    ports:
+      - "80:80"
+      - "443:443"
+    volumes:
+      - ./Caddyfile:/etc/caddy/Caddyfile:ro
+      - caddy_data:/data
+      - caddy_config:/config
+
+volumes:
+  advreajuste_data:
+    name: advreajuste_data
+  caddy_data:
+    name: advreajuste_caddy_data
+  caddy_config:
+    name: advreajuste_caddy_config
+

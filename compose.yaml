@@ -5,6 +5,8 @@ services:
     build:
       context: .
     image: advreajuste-app:latest
+    container_name: advreajuste
+    hostname: advreajuste
     restart: unless-stopped
     env_file:
       - .env
